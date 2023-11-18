@@ -3,6 +3,7 @@ package codinpad.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import codinpad.exceptions.ResourceNotFoundException;
@@ -14,6 +15,9 @@ public class UserService {
      
     @Autowired
     private UserRepo  userRepo;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public UserDTO createUser(UserDTO userdto)
     {
@@ -57,26 +61,27 @@ public class UserService {
         this.userRepo.delete(user);
     }
 
-    private User dtoToUser(UserDTO userDto)
+    public User dtoToUser(UserDTO userDto)
     {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setAbout(userDto.getAbout());
-        user.setPassword(userDto.getPassword());
+        User user = this.modelMapper.map(userDto, User.class);
+
+        // user.setId(userDto.getId());
+        // user.setName(userDto.getName());
+        // user.setEmail(userDto.getEmail());
+        // user.setAbout(userDto.getAbout());
+        // user.setPassword(userDto.getPassword());
 
         return user;
     }
 
-    private UserDTO userToDto(User user)
+    public UserDTO userToDto(User user)
     {
-        UserDTO userdto = new UserDTO();
-        userdto.setId(user.getId());
-        userdto.setName(user.getName());
-        userdto.setEmail(user.getEmail());
-        userdto.setAbout(user.getAbout());
-        userdto.setPassword(user.getPassword());
+        UserDTO userdto = this.modelMapper.map(user, UserDTO.class);
+        // userdto.setId(user.getId());
+        // userdto.setName(user.getName());
+        // userdto.setEmail(user.getEmail());
+        // userdto.setAbout(user.getAbout());
+        // userdto.setPassword(user.getPassword());
 
         return userdto;
     }
