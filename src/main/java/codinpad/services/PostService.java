@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import codinpad.exceptions.ResourceNotFoundException;
 import codinpad.models.Category;
@@ -71,9 +74,11 @@ public class PostService
         return postDtos;
     }
 
-    public List<PostDTO> getAllPost()
+    public List<PostDTO> getAllPost(Integer pageNumber, Integer pageSize)
     {
-        List<Post> posts = this.postRepo.findAll();
+        Pageable p = PageRequest.of(pageNumber, pageSize);
+        Page<Post> pageContent = this.postRepo.findAll(p);
+        List<Post> posts = pageContent.getContent();
 
         List<PostDTO> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDTO.class)).collect(Collectors.toList());
 
@@ -85,6 +90,23 @@ public class PostService
         Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post", "Post Id", postId));
 
         return this.modelMapper.map(post, PostDTO.class);
+    }
+
+    public PostDTO updatePost(PostDTO postDto, Integer postId)
+    {
+        Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("post", "post id", postId));
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setImageName(postDto.getImageName());
+
+        Post updatedPost = this.postRepo.save(post);
+        return this.modelMapper.map(updatedPost, PostDTO.class);
+    }
+
+    public void deletePost(Integer postId)
+    {
+      Post post = this.postRepo.findById(postId).orElseThrow(()-> new ResourceNotFoundException("post", "post id", postId));
+      this.postRepo.delete(post);
     }
 
 }
