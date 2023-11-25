@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import codinpad.payloads.ApiResponse;
 import codinpad.payloads.PostDTO;
+import codinpad.payloads.PostResponse;
 import codinpad.services.PostService;
 
 @RestController
@@ -53,13 +54,15 @@ public class PostController
       }
 
       @GetMapping("/posts")
-      public ResponseEntity<List<PostDTO>> getAllPost(@RequestParam(value = "pageNumber",defaultValue = "1", required = false) Integer pageNumber,
-      @RequestParam(value = "pageSize",defaultValue = "10", required = false) Integer pageSize
+      public ResponseEntity<PostResponse> getAllPost(@RequestParam(value = "pageNumber",defaultValue = "1", required = false) Integer pageNumber,
+      @RequestParam(value = "pageSize",defaultValue = "10", required = false) Integer pageSize,
+      @RequestParam(value = "sortBy",defaultValue = "postId", required = false) String sortBy,
+      @RequestParam(value = "sortDir",defaultValue = "asc", required = false) String sortDir
       )
       {
-          List<PostDTO> postDtos = this.postService.getAllPost(pageNumber, pageSize);
+          PostResponse postResponse = this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
 
-          return new ResponseEntity<List<PostDTO>>(postDtos, HttpStatus.OK);
+          return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
       }
 
       @GetMapping("/posts/{postId}")

@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import codinpad.exceptions.ResourceNotFoundException;
 import codinpad.models.Category;
 import codinpad.models.Post;
 import codinpad.models.User;
 import codinpad.payloads.PostDTO;
+import codinpad.payloads.PostResponse;
 import codinpad.repositories.CategoryRepo;
 import codinpad.repositories.PostRepo;
 import codinpad.repositories.UserRepo;
@@ -74,15 +76,29 @@ public class PostService
         return postDtos;
     }
 
-    public List<PostDTO> getAllPost(Integer pageNumber, Integer pageSize)
+    public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
-        Pageable p = PageRequest.of(pageNumber, pageSize);
+        Sort sort = null;
+        if(sortDir.equalsIgnoreCase("asc"))
+        {
+          sort = Sort.by(sortBy).ascending();
+        } else {
+            sort = Sort.by(sortBy).descending();
+        }
+        PostResponse postResponse = new PostResponse();
+        Pageable p = PageRequest.of(pageNumber, pageSize, sort);
         Page<Post> pageContent = this.postRepo.findAll(p);
         List<Post> posts = pageContent.getContent();
 
         List<PostDTO> postDtos = posts.stream().map((post)->this.modelMapper.map(post, PostDTO.class)).collect(Collectors.toList());
 
-        return postDtos;
+        postResponse.setContent(postDtos);
+        postResponse.setPageNumber(pageContent.getNumber());
+        postResponse.setPageSize(pageContent.getSize());
+        postResponse.setTotalElement(pageContent.getTotalElements());
+        postResponse.setTotalPages(pageContent.getTotalPages());
+        postResponse.setLastPage(pageContent.isLast());
+        return postResponse;
     }
 
     public PostDTO getPostbyId(Integer postId)
