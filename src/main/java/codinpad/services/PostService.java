@@ -125,4 +125,13 @@ public class PostService
       this.postRepo.delete(post);
     }
 
+    public List<PostDTO> searchPost(String keyword)
+    {
+        List<Post> posts = this.postRepo.findByTitleContaining(keyword);
+
+        List<PostDTO> postDtos = posts.stream().map((post)-> this.modelMapper.map(post, PostDTO.class)).collect(Collectors.toList());
+
+        return postDtos;
+    }
+
 }
