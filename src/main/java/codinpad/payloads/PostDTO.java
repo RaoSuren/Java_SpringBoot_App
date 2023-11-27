@@ -28,7 +28,7 @@ public class PostDTO {
 
     private UserDTO user;
 
-    private Set<Comment> comments = new HashSet<>();
+    private Set<CommentDTO> comments = new HashSet<>();
 
     public String getTitle()
     {
