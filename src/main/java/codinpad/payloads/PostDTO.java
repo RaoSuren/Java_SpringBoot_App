@@ -1,8 +1,11 @@
 package codinpad.payloads;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import codinpad.models.Category;
+import codinpad.models.Comment;
 import codinpad.models.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +27,8 @@ public class PostDTO {
     private CategoryDTO category;
 
     private UserDTO user;
+
+    private Set<Comment> comments = new HashSet<>();
 
     public String getTitle()
     {
